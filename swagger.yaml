@@ -1,0 +1,110 @@
+swagger: "2.0"
+info:
+  description: |
+    Financial transaction switch
+  version: "0.0.1"
+  title: MiniSwitch
+  license:
+    name: MIT
+    url: https://github.com/pablomarambio/miniswitch/blob/master/LICENSE
+paths:
+  /financial/authorization:
+    post:
+      tags:
+        - authorization
+      summary: Attempt a new card capture
+      description: ""
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: The card capture request
+          required: true
+          schema:
+            $ref: "#/definitions/CardCaptureRequest"
+      responses:
+        "200":
+          description: successful operation
+        "405":
+          description: Invalid input
+definitions:
+  CardCaptureRequest:
+    type: object
+    properties:
+      purchaseOrderHeader:
+        $ref: "#/definitions/PurchaseOrderHeader"
+      merchantHeader:
+        $ref: "#/definitions/MerchantHeader"
+      paymentHeader:
+        $ref: "#/definitions/PaymentHeader"
+  PurchaseOrderHeader:
+    type: object
+    properties:
+      id:
+        type: string
+        description: the unique ID of the purchase order
+      timestamp:
+        type: string
+        format: date-time
+        description: the purchase order creation date
+      proposedPromotionCode:
+        type: string
+        description: reserved as a means to send information from merchant to acquirer
+      proposedCategory:
+        type: string
+        description: reserved as a means to send information from merchant to acquirer
+      proposedInterestRate:
+        type: number
+        format: decimal
+        description: reserved as a means to send information from merchant to acquirer
+  MerchantHeader:
+    type: object
+    properties:
+      merchantId:
+        $ref: "#/definitions/MerchantId"
+      merchantTransactionId:
+        type: integer
+        format: int64
+  Card:
+    type: object
+    properties:
+      pan:
+        type: string
+      expadte:
+        type: string
+      cvv:
+        type: string
+  BankAccount:
+    type: object
+    properties:
+      issuerId:
+        type: string
+      accountType:
+        type: string
+      accountNumber:
+        type: string
+  PaymentHeader:
+    type: object
+    properties:
+      card:
+        $ref: "#/definitions/Card"
+      bankAccount:
+        $ref: "#/definitions/BankAccount"
+      amount:
+        type: number
+        format: decimal
+      installments:
+        type: number
+        format: int32
+  MerchantId:
+    type: object
+    properties:
+      merchantCode:
+        type: string
+      branchCode:
+        type: string
+      terminalCode:
+        type: string
